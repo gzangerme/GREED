@@ -35,7 +35,7 @@ layout = dbc.Col([
                             ], style={"padding-left": "20px", "padding-top": "10px"}),
                             dbc.Card(
                                 html.Div(className="fa fa-university", style=card_icon), 
-                                color="warning",
+                                color="purple",
                                 style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
                             )])
                     ], width=4),
@@ -63,7 +63,7 @@ layout = dbc.Col([
                     ], style={"padding-left": "20px", "padding-top": "10px"}),
                     dbc.Card(
                         html.Div(className="fa fa-meh-o", style=card_icon), 
-                        color="danger",
+                        color="red",
                         style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
                     )])
                 ], width=4),
@@ -189,9 +189,9 @@ def update_output(data_despesa, data_receita, despesa, receita, theme):
 
     fig = go.Figure()
     
-    # fig.add_trace(go.Scatter(name='Despesas', x=df_ds['Data'], y=df_ds['Acumulo'], fill='tonexty', mode='lines'))
-    fig.add_trace(go.Scatter(name='Receitas', x=df_rc['Data'], y=df_rc['Acumulo'], fill='tonextx', mode='lines'))
-    # fig.add_trace(go.Scatter(name='Saldo Mensal', x=df_saldo_mes['Mes'], y=df_saldo_mes['Acumulado'], mode='lines'))
+    fig.add_trace(go.Scatter(name='Despesas', x=df_ds['Data'], y=df_ds['Acumulo'], fill='tonexty', mode='lines',line_color="red"))
+    fig.add_trace(go.Scatter(name='Receitas', x=df_rc['Data'], y=df_rc['Acumulo'], fill='tonextx', mode='lines',line_color="green"))
+    fig.add_trace(go.Scatter(name='Saldo Mensal', x=df_saldo_mes['Mes'], y=df_saldo_mes['Acumulado'], mode='lines',line_color="purple"))
 
     fig.update_layout(margin=graph_margin, template=template_from_url(theme))
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
@@ -241,7 +241,7 @@ def pie_receita(data_receita, receita, theme):
     df = pd.DataFrame(data_receita)
     df = df[df['Categoria'].isin(receita)]
 
-    fig = px.pie(df, values=df.Valor, names=df.Categoria, hole=.2)
+    fig = px.pie(df, values=df.Valor, names=df.Categoria, hole=.3)
     fig.update_layout(title={'text': "Receitas"})
     fig.update_layout(margin=graph_margin, template=template_from_url(theme))
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
@@ -259,7 +259,7 @@ def pie_despesa(data_despesa, despesa, theme):
     df = pd.DataFrame(data_despesa)
     df = df[df['Categoria'].isin(despesa)]
 
-    fig = px.pie(df, values=df.Valor, names=df.Categoria, hole=.2)
+    fig = px.pie(df, values=df.Valor, names=df.Categoria, hole=.3)
     fig.update_layout(title={'text': "Despesas"})
 
     fig.update_layout(margin=graph_margin, template=template_from_url(theme))
