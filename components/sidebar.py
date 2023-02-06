@@ -17,11 +17,6 @@ import numpy as np
 import pandas as pd
 from globals import *
 
-df_cat_receita = pd.read_csv("./df_cat_receita.csv")
-cat_receita = df_cat_receita['Categoria'].tolist()
-
-df_cat_despesa = pd.read_csv("./df_cat_despesa.csv")
-cat_despesa = df_cat_despesa['Categoria'].tolist()
 
 # ========= Layout ========= #
 layout = dbc.Card([
@@ -112,7 +107,7 @@ layout = dbc.Card([
                 ], width=6),
 
                 dbc.Col([
-                    dbc.Button(color="warning", id="open-novo-despesa",
+                    dbc.Button(color="danger", id="open-novo-despesa",
                             children=["+ Despesa"]),
                 ], width=6)
             ]),
@@ -304,7 +299,7 @@ layout = dbc.Card([
                     dbc.NavLink("Dashboard", href="/dashboards", active="exact"),
                     dbc.NavLink("Extratos", href="/extratos", active="exact"),
                 ], vertical=True, pills=True, id='nav_buttons', style={"margin-bottom": "50px"}),
-            ThemeChangerAIO(aio_id="theme", radio_props={"value":dbc.themes.SOLAR})
+            ThemeChangerAIO(aio_id="theme", radio_props={"value":dbc.themes.VAPOR})
 
         ], id='sidebar_completa'
     )
@@ -353,8 +348,10 @@ def toggle_modal(n1, is_open):
     Output('checklist-selected-style-despesa', 'options'),
     Output('checklist-selected-style-despesa', 'value'),
     Output('stored-cat-despesas', 'data')],
+
     [Input("add-category-despesa", "n_clicks"),
     Input("remove-category-despesa", 'n_clicks')],
+
     [State("input-add-despesa", "value"),
     State('checklist-selected-style-despesa', 'value'),
     State('stored-cat-despesas', 'data')]
@@ -395,8 +392,10 @@ def add_category(n, n2, txt, check_delete, data):
     Output('checklist-selected-style-receita', 'options'),
     Output('checklist-selected-style-receita', 'value'),
     Output('stored-cat-receitas', 'data')],
+
     [Input("add-category-receita", "n_clicks"),
     Input("remove-category-receita", 'n_clicks')],
+
     [State("input-add-receita", "value"),
     State('checklist-selected-style-receita', 'value'),
     State('stored-cat-receitas', 'data')]
@@ -435,7 +434,9 @@ def add_category(n, n2, txt, check_delete, data):
 # Enviar Form receita
 @app.callback(
     Output('store-receitas', 'data'),
+
     Input("salvar_receita", "n_clicks"),
+
     [
         State("txt-receita", "value"),
         State("valor_receita", "value"),
@@ -451,7 +452,7 @@ def salve_form_receita(n, descricao, valor, date, switches, categoria, dict_rece
     if n and not(valor == "" or valor== None):
         valor = round(float(valor), 2)
         date = pd.to_datetime(date).date()
-        categorias = categoria[0] if type(categoria) == list else categoria
+        categoria = categoria[0] if type(categoria) == list else categoria
 
         recebido = 1 if 1 in switches else 0
         fixo = 0 if 2 in switches else 0
@@ -466,16 +467,18 @@ def salve_form_receita(n, descricao, valor, date, switches, categoria, dict_rece
 # Enviar Form despesa
 @app.callback(
     Output('store-despesas', 'data'),
+
     Input("salvar_despesa", "n_clicks"),
+
     [
-        State("txt-despesa", "value"),
         State("valor_despesa", "value"),
-        State("date-despesas", "date"),
         State("switches-input-despesa", "value"),
         State("select_despesa", "value"),
+        State("date-despesas", "date"),
+        State("txt-despesa", "value"),
         State('store-despesas', 'data')
     ])
-def salve_form_despesa(n, descricao, valor, date, switches, categoria, dict_despesas):
+def salve_form_despesa(n, valor, switches, descricao, date, categoria, dict_despesas):
     df_despesas = pd.DataFrame(dict_despesas)
 
     if n and not(valor == "" or valor== None):
@@ -489,7 +492,7 @@ def salve_form_despesa(n, descricao, valor, date, switches, categoria, dict_desp
         if descricao == None or descricao == "":
             descricao = 0
 
-        df_despesas.loc[df_despesas.shape[0]] = [valor, recebido, fixo, date, categoria, descricao]
+        df_despesas.loc[df_despesas.shape[0]] = [valor, recebido, fixo, date, descricao, categoria]
         df_despesas.to_csv("df_despesas.csv")
 
     data_return = df_despesas.to_dict()
